@@ -23,7 +23,6 @@ http://s2-public-api-prod.us-west-2.elasticbeanstalk.com/corpus/download/
 results, err := semanticscholar.ParseFile("/PATH/TO/BULK/DATA")
 ```
 
-
 ## API
 TODO
 
