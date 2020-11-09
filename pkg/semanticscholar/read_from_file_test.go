@@ -5,12 +5,22 @@ import (
 	"testing"
 )
 
+// Test std file
 func TestParseFile(t *testing.T) {
-	// res, err := ParseFile("./testdata/test.jsonl")
-	res, err := ParseFile("/Users/sebastianerhardt/Downloads/s2-corpus-000")
+	results, err := ParseFile("../../test/s2-corpus-000")
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Amount of results", len(res))
-	log.Println("Example: ", res[10].Title)
+	log.Println("Amount of results:", len(results))
+	log.Println("Example:", results[10].Title)
+}
+
+// Tests gz file
+func TestParseFileGz(t *testing.T) {
+	results, err := ParseFile("../../test/s2-corpus-000.gz")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Amount of results:", len(results))
+	log.Println("Example:", results[10].Title)
 }

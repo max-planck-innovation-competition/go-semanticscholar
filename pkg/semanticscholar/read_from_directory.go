@@ -22,22 +22,23 @@ func visit(files *[]string) filepath.WalkFunc {
 }
 
 // ReadFromDirectory parses the directory of separated files provided by semantic scholar
-func ReadFromDirectory(directoryPath string) (results []*Publication) {
+func ReadFromDirectory(directoryPath string) (results []*Publication, err error) {
 	log.Println("Start restoring directory:", directoryPath)
 
 	var filPaths []string // stores the file paths of all the files in the directory
 
 	// walk over the files in the directory
-	err := filepath.Walk(directoryPath, visit(&filPaths))
+	err = filepath.Walk(directoryPath, visit(&filPaths))
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	// Read all files
 	for _, file := range filPaths {
-		docs, err := ParseFile(file)
-		if err != nil {
-			log.Fatal("read file", err)
+		docs, errFile := ParseFile(file)
+		if errFile != nil {
+			log.Println("error while reading file: ", file, " : ", errFile)
+			return nil, errFile
 		}
 		// add the parsed documents to the results
 		results = append(results, docs...)
