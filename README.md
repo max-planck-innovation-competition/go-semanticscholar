@@ -18,13 +18,26 @@ Semantic Scholar's records for research papers published in all fields provided 
 Corpus can be downloaded from:
 http://s2-public-api-prod.us-west-2.elasticbeanstalk.com/corpus/download/
 
-### Usage
+The program can handle compressed (`.gz`) and uncompressed files.
+
+### Single File Usage
 ```
-results, err := semanticscholar.ParseFile("/PATH/TO/BULK/DATA")
+results, err := semanticscholar.ParseFile("/PATH/TO/BULK/DATA/DIRECTORY/FILE")
+```
+
+with compressed data
+```
+results, err := semanticscholar.ParseFile("/PATH/TO/BULK/DATA/DIRECTORY/FILE.gz")
+```
+
+### Directory Usage
+```
+results, err := semanticscholar.ReadFromDirectory("/PATH/TO/BULK/DATA/DIRECTORY")
 ```
 
 ## API
-TODO
+
+Coming soon
 
 # Authors
 * Sebastian Erhardt
