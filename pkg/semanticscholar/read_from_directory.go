@@ -23,7 +23,7 @@ func visit(files *[]string) filepath.WalkFunc {
 
 // ReadFromDirectory parses the directory of separated files provided by semantic scholar
 func ReadFromDirectory(directoryPath string) (results []*Publication, err error) {
-	log.Println("Start restoring directory:", directoryPath)
+	log.Println("Start reading directory:", directoryPath)
 
 	var filPaths []string // stores the file paths of all the files in the directory
 
