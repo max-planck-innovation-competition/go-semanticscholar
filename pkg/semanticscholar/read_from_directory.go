@@ -25,16 +25,16 @@ func visit(files *[]string) filepath.WalkFunc {
 func ReadFromDirectory(directoryPath string) (results []*Publication, err error) {
 	log.Println("Start reading directory:", directoryPath)
 
-	var filPaths []string // stores the file paths of all the files in the directory
+	var filePaths []string // stores the file paths of all the files in the directory
 
 	// walk over the files in the directory
-	err = filepath.Walk(directoryPath, visit(&filPaths))
+	err = filepath.Walk(directoryPath, visit(&filePaths))
 	if err != nil {
 		return nil, err
 	}
 
 	// Read all files
-	for _, file := range filPaths {
+	for _, file := range filePaths {
 		docs, errFile := ParseFile(file)
 		if errFile != nil {
 			log.Println("error while reading file: ", file, " : ", errFile)

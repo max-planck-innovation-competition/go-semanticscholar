@@ -8,14 +8,15 @@ import (
 
 func TransformDirectory(importDirectory, exportDirectory string, compress bool) (err error) {
 	log.Println("Start transforming directory:", importDirectory)
-	var filPaths []string // stores the file paths of all the files in the directory
+	var filePaths []string // stores the file paths of all the files in the directory
 	// walk over the files in the directory
-	err = filepath.Walk(importDirectory, visit(&filPaths))
+	err = filepath.Walk(importDirectory, visit(&filePaths))
 	if err != nil {
 		return err
 	}
 	// Read all files
-	for i, file := range filPaths {
+	for i, file := range filePaths {
+		log.Println("Process:", i, "/", len(filePaths))
 		publications, errFile := ParseFile(file)
 		if errFile != nil {
 			log.Println("error while reading file: ", file, " : ", errFile)
