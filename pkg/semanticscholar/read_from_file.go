@@ -48,8 +48,8 @@ func ParseFile(fileName string) (results []*Publication, err error) {
 	}
 
 	// create line buffer
-	buf := make([]byte, 0, 256*1024)
-	scanner.Buffer(buf, 10*1024*1024) // 100mb
+	buf := make([]byte, 0, 1024*1024)
+	scanner.Buffer(buf, 30*1024*1024) // 300mb
 
 	// iterate over the lines
 	for scanner.Scan() {

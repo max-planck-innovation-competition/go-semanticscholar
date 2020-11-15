@@ -163,32 +163,32 @@ func ExportCsv(gzip, addHeaders bool, onlyHeaders bool, publications []*Publicat
 		publication2FieldsOfStudyEdges,
 		publication2publicationEdges := generateRecords(addHeaders, onlyHeaders, publications)
 	// author nodes
-	err = WriteFile(gzip, authorNodes, exportFolderPath+"/"+prefix+"author_nodes"+suffix)
+	err = WriteFile(gzip, authorNodes, exportFolderPath+"/"+prefix+"author-nodes"+suffix)
 	if err != nil {
 		return
 	}
 	// publication nodes
-	err = WriteFile(gzip, publicationNodes, exportFolderPath+"/"+prefix+"publication_nodes"+suffix)
+	err = WriteFile(gzip, publicationNodes, exportFolderPath+"/"+prefix+"publication-nodes"+suffix)
 	if err != nil {
 		return
 	}
 	// fields of study
-	err = WriteFile(gzip, fieldsOfStudyNodes, exportFolderPath+"/"+prefix+"fieldsOfStudy_nodes"+suffix)
+	err = WriteFile(gzip, fieldsOfStudyNodes, exportFolderPath+"/"+prefix+"fields-of-study-nodes"+suffix)
 	if err != nil {
 		return
 	}
 	// author to publication edges
-	err = WriteFile(gzip, author2PublicationEdges, exportFolderPath+"/"+prefix+"author2Publication_edges"+suffix)
+	err = WriteFile(gzip, author2PublicationEdges, exportFolderPath+"/"+prefix+"author-2-publication-edges"+suffix)
 	if err != nil {
 		return
 	}
 	// publication to field of study edges
-	err = WriteFile(gzip, publication2FieldsOfStudyEdges, exportFolderPath+"/"+prefix+"publication2FieldsOfStudy_edges"+suffix)
+	err = WriteFile(gzip, publication2FieldsOfStudyEdges, exportFolderPath+"/"+prefix+"publication-2-fields-of-study-edges"+suffix)
 	if err != nil {
 		return
 	}
 	// publication to publication edges
-	err = WriteFile(gzip, publication2publicationEdges, exportFolderPath+"/"+prefix+"publication2publication_edges"+suffix)
+	err = WriteFile(gzip, publication2publicationEdges, exportFolderPath+"/"+prefix+"publication-2-publication-edges"+suffix)
 	if err != nil {
 		return
 	}
