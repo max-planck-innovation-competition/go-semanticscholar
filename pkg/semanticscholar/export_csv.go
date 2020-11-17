@@ -43,7 +43,8 @@ var fieldOfStudyNodesHeader = []string{
 }
 var author2PublicationEdgesHeader = []string{":START_ID(Author-ID)", ":END_ID(Publication-ID)", ":TYPE"}
 var publication2FieldsOfStudyEdgesHeader = []string{":START_ID(Publication-ID)", ":END_ID(Field-Of-Study-ID)", ":TYPE"}
-var publication2publicationEdgesHeader = []string{":START_ID(Publication-ID)", ":END_ID(Publication-ID)", ":TYPE"}
+var inCitationEdgesHeader = []string{":START_ID(Publication-ID)", ":END_ID(Publication-ID)", ":TYPE"}
+var outCitationEdgesHeader = []string{":START_ID(Publication-ID)", ":END_ID(Publication-ID)", ":TYPE"}
 
 // CleanString repairs artifacts that are in the dataset
 // e.g. German umlauts
@@ -65,7 +66,8 @@ func generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publication) (
 	fieldsOfStudyNodes [][]string,
 	author2PublicationEdges [][]string,
 	publication2FieldsOfStudyEdges [][]string,
-	publication2publicationEdges [][]string, // publication -> publication
+	inCitationEdges [][]string, // publication -> publication
+	outCitationEdges [][]string, // publication -> publication
 ) {
 
 	authors := map[string]string{}     // creates a map of authors and ids
@@ -79,7 +81,8 @@ func generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publication) (
 		fieldsOfStudyNodes = append(fieldsOfStudyNodes, fieldOfStudyNodesHeader)
 		author2PublicationEdges = append(author2PublicationEdges, author2PublicationEdgesHeader)
 		publication2FieldsOfStudyEdges = append(publication2FieldsOfStudyEdges, publication2FieldsOfStudyEdgesHeader)
-		publication2publicationEdges = append(publication2publicationEdges, publication2publicationEdgesHeader)
+		inCitationEdges = append(inCitationEdges, inCitationEdgesHeader)
+		outCitationEdges = append(outCitationEdges, outCitationEdgesHeader)
 		// if you are interested in only the headers
 		if onlyHeaders {
 			return
@@ -125,21 +128,17 @@ func generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publication) (
 			publication2FieldsOfStudyEdges = append(publication2FieldsOfStudyEdges, []string{pub.ID, CleanString(f), "FIELDS_OF_STUDY"})
 		}
 
-	}
-
-	for _, pub := range pubs {
 		// publication 2 publication
+
+		// in citations
 		for _, p := range pub.InCitations {
-			// only add the publication if its in the index
-			// if publications[p] && publications[pub.ID] {
-			publication2publicationEdges = append(publication2publicationEdges, []string{p, pub.ID, "CITES"})
-			//}
+			// List of paper IDs which cited this paper.
+			inCitationEdges = append(inCitationEdges, []string{pub.ID, p, "CITED_BY"})
 		}
+		// out citations
 		for _, p := range pub.OutCitations {
-			// only add the publication if its in the index
-			// if publications[p] && publications[pub.ID] {
-			publication2publicationEdges = append(publication2publicationEdges, []string{pub.ID, p, "CITES"})
-			//}
+			// List of IDs which this paper cited.
+			outCitationEdges = append(outCitationEdges, []string{pub.ID, p, "CITES"})
 		}
 	}
 
@@ -161,7 +160,8 @@ func ExportCsv(gzip, addHeaders bool, onlyHeaders bool, publications []*Publicat
 		fieldsOfStudyNodes,
 		author2PublicationEdges,
 		publication2FieldsOfStudyEdges,
-		publication2publicationEdges := generateRecords(addHeaders, onlyHeaders, publications)
+		inCitationEdges,
+		outCitationEdges := generateRecords(addHeaders, onlyHeaders, publications)
 	// author nodes
 	err = WriteFile(gzip, authorNodes, exportFolderPath+"/"+prefix+"author-nodes"+suffix)
 	if err != nil {
@@ -187,8 +187,13 @@ func ExportCsv(gzip, addHeaders bool, onlyHeaders bool, publications []*Publicat
 	if err != nil {
 		return
 	}
-	// publication to publication edges
-	err = WriteFile(gzip, publication2publicationEdges, exportFolderPath+"/"+prefix+"publication-2-publication-edges"+suffix)
+	// in citations
+	err = WriteFile(gzip, inCitationEdges, exportFolderPath+"/"+prefix+"in-citation-edges"+suffix)
+	if err != nil {
+		return
+	}
+	// out CitationEdges
+	err = WriteFile(gzip, outCitationEdges, exportFolderPath+"/"+prefix+"out-citation-edges"+suffix)
 	if err != nil {
 		return
 	}
