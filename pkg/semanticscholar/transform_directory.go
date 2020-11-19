@@ -25,7 +25,7 @@ func TransformDirectory(importDirectory, exportDirectory string, compress, combi
 		// create header files
 		// only do that once
 		if i == 0 {
-			errHeader := ExportCsv(compress, true, true, publications, exportDirectory, "", "-headers")
+			errHeader := ExportCsv(i, compress, true, true, publications, exportDirectory, "", "-headers")
 			if errHeader != nil {
 				log.Println("error while exporting header files ", errHeader)
 				return errHeader
@@ -35,7 +35,7 @@ func TransformDirectory(importDirectory, exportDirectory string, compress, combi
 		// the output is one file containing all of the
 		if combined {
 			suffix := "-data-all"
-			errExport := ExportAppendCsv(publications, exportDirectory, "", suffix)
+			errExport := ExportAppendCsv(i, publications, exportDirectory, "", suffix)
 			if errExport != nil {
 				log.Println("error while exporting files: ", errExport)
 				return errExport
@@ -44,7 +44,7 @@ func TransformDirectory(importDirectory, exportDirectory string, compress, combi
 			// the output are multiple files
 			suffix := "-data-" + strconv.Itoa(i)
 			// export files
-			errExport := ExportCsv(compress, false, false, publications, exportDirectory, "", suffix)
+			errExport := ExportCsv(i, compress, false, false, publications, exportDirectory, "", suffix)
 			if errExport != nil {
 				log.Println("error while exporting files: ", errExport)
 				return errExport

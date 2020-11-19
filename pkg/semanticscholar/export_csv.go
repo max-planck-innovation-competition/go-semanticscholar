@@ -154,7 +154,7 @@ func generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publication) (
 }
 
 // ExportCsv transforms the data and stores it in a (compressed) csv file
-func ExportCsv(gzip, addHeaders bool, onlyHeaders bool, publications []*Publication, exportFolderPath, prefix, suffix string) (err error) {
+func ExportCsv(i int, gzip, addHeaders bool, onlyHeaders bool, publications []*Publication, exportFolderPath, prefix, suffix string) (err error) {
 	authorNodes,
 		publicationNodes,
 		fieldsOfStudyNodes,
@@ -167,13 +167,15 @@ func ExportCsv(gzip, addHeaders bool, onlyHeaders bool, publications []*Publicat
 	if err != nil {
 		return
 	}
+	if i == 0 {
+		// fields of study
+		err = WriteFile(gzip, fieldsOfStudyNodes, exportFolderPath+"/"+prefix+"fields-of-study-nodes"+suffix)
+		if err != nil {
+			return
+		}
+	}
 	// publication nodes
 	err = WriteFile(gzip, publicationNodes, exportFolderPath+"/"+prefix+"publication-nodes"+suffix)
-	if err != nil {
-		return
-	}
-	// fields of study
-	err = WriteFile(gzip, fieldsOfStudyNodes, exportFolderPath+"/"+prefix+"fields-of-study-nodes"+suffix)
 	if err != nil {
 		return
 	}
@@ -201,7 +203,7 @@ func ExportCsv(gzip, addHeaders bool, onlyHeaders bool, publications []*Publicat
 }
 
 // ExportCsv transforms the data and stores it in a (compressed) csv file
-func ExportAppendCsv(publications []*Publication, exportFolderPath, prefix, suffix string) (err error) {
+func ExportAppendCsv(i int, publications []*Publication, exportFolderPath, prefix, suffix string) (err error) {
 	authorNodes,
 		publicationNodes,
 		fieldsOfStudyNodes,
@@ -214,16 +216,19 @@ func ExportAppendCsv(publications []*Publication, exportFolderPath, prefix, suff
 	if err != nil {
 		return
 	}
+	if i == 0 {
+		// fields of study
+		err = AppendFile(fieldsOfStudyNodes, exportFolderPath+"/"+prefix+"fields-of-study-nodes"+suffix)
+		if err != nil {
+			return
+		}
+	}
 	// publication nodes
 	err = AppendFile(publicationNodes, exportFolderPath+"/"+prefix+"publication-nodes"+suffix)
 	if err != nil {
 		return
 	}
-	// fields of study
-	err = AppendFile(fieldsOfStudyNodes, exportFolderPath+"/"+prefix+"fields-of-study-nodes"+suffix)
-	if err != nil {
-		return
-	}
+
 	// author to publication edges
 	err = AppendFile(author2PublicationEdges, exportFolderPath+"/"+prefix+"author-2-publication-edges"+suffix)
 	if err != nil {
