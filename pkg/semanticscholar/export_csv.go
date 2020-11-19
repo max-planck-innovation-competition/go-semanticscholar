@@ -315,7 +315,7 @@ func writeCSV(data [][]string, filePath string) (err error) {
 
 // AppendFile appends the content to all file
 func AppendFile(data [][]string, filePath string) (err error) {
-	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile(filePath+".csv", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic(err)
 	}
