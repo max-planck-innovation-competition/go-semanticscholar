@@ -200,6 +200,53 @@ func ExportCsv(gzip, addHeaders bool, onlyHeaders bool, publications []*Publicat
 	return
 }
 
+// ExportCsv transforms the data and stores it in a (compressed) csv file
+func ExportAppendCsv(publications []*Publication, exportFolderPath, prefix, suffix string) (err error) {
+	authorNodes,
+		publicationNodes,
+		fieldsOfStudyNodes,
+		author2PublicationEdges,
+		publication2FieldsOfStudyEdges,
+		inCitationEdges,
+		outCitationEdges := generateRecords(false, false, publications)
+	// author nodes
+	err = AppendFile(authorNodes, exportFolderPath+"/"+prefix+"author-nodes"+suffix)
+	if err != nil {
+		return
+	}
+	// publication nodes
+	err = AppendFile(publicationNodes, exportFolderPath+"/"+prefix+"publication-nodes"+suffix)
+	if err != nil {
+		return
+	}
+	// fields of study
+	err = AppendFile(fieldsOfStudyNodes, exportFolderPath+"/"+prefix+"fields-of-study-nodes"+suffix)
+	if err != nil {
+		return
+	}
+	// author to publication edges
+	err = AppendFile(author2PublicationEdges, exportFolderPath+"/"+prefix+"author-2-publication-edges"+suffix)
+	if err != nil {
+		return
+	}
+	// publication to field of study edges
+	err = AppendFile(publication2FieldsOfStudyEdges, exportFolderPath+"/"+prefix+"publication-2-fields-of-study-edges"+suffix)
+	if err != nil {
+		return
+	}
+	// in citations
+	err = AppendFile(inCitationEdges, exportFolderPath+"/"+prefix+"in-citation-edges"+suffix)
+	if err != nil {
+		return
+	}
+	// out CitationEdges
+	err = AppendFile(outCitationEdges, exportFolderPath+"/"+prefix+"out-citation-edges"+suffix)
+	if err != nil {
+		return
+	}
+	return
+}
+
 func WriteFile(gzip bool, data [][]string, filePath string) (err error) {
 	if gzip {
 		return writeCSVGz(data, filePath)
@@ -246,6 +293,26 @@ func writeCSV(data [][]string, filePath string) (err error) {
 	file, err := os.Create(filePath + ".csv")
 	if err != nil {
 		return
+	}
+	// create writer
+	csvWriter := csv.NewWriter(file)
+	err = csvWriter.WriteAll(data)
+	if err != nil {
+		return
+	}
+	// close file
+	err = file.Close()
+	if err != nil {
+		return
+	}
+	return
+}
+
+// AppendFile appends the content to all file
+func AppendFile(data [][]string, filePath string) (err error) {
+	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	if err != nil {
+		panic(err)
 	}
 	// create writer
 	csvWriter := csv.NewWriter(file)

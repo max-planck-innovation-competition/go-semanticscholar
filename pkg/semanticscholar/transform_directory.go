@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func TransformDirectory(importDirectory, exportDirectory string, compress bool) (err error) {
+func TransformDirectory(importDirectory, exportDirectory string, compress, combined bool) (err error) {
 	log.Println("Start transforming directory:", importDirectory)
 	var filePaths []string // stores the file paths of all the files in the directory
 	// walk over the files in the directory
@@ -31,13 +31,24 @@ func TransformDirectory(importDirectory, exportDirectory string, compress bool) 
 				return errHeader
 			}
 		}
-		// create suffix with index
-		suffix := "-data-" + strconv.Itoa(i)
-		// export files
-		errExport := ExportCsv(compress, false, false, publications, exportDirectory, "", suffix)
-		if errExport != nil {
-			log.Println("error while exporting files: ", errExport)
-			return errExport
+		// if the mode is combined
+		// the output is one file containing all of the
+		if combined {
+			suffix := "-data-all"
+			errExport := ExportAppendCsv(publications, exportDirectory, "", suffix)
+			if errExport != nil {
+				log.Println("error while exporting files: ", errExport)
+				return errExport
+			}
+		} else {
+			// the output are multiple files
+			suffix := "-data-" + strconv.Itoa(i)
+			// export files
+			errExport := ExportCsv(compress, false, false, publications, exportDirectory, "", suffix)
+			if errExport != nil {
+				log.Println("error while exporting files: ", errExport)
+				return errExport
+			}
 		}
 	}
 	log.Println("Done transforming directory:", importDirectory)
