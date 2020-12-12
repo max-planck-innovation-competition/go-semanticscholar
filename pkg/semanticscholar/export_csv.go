@@ -4,7 +4,6 @@ import (
 	"compress/gzip"
 	"encoding/csv"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -19,24 +18,24 @@ The <name> is used for properties and node IDs. In all other cases, the <name> p
 
 var authorNodesHeader = []string{
 	"authorId:ID(Author-ID)",
-	"name",
+	// "name",
 }
 var publicationNodesHeader = []string{
 	"publicationId:ID(Publication-ID)",
-	"title",
-	"paperAbstract",
-	"s2url",
-	"sources",
-	"pdfUrls",
-	"year:int",
-	"venue",
-	"journalName",
-	"journalVolume",
-	"journalPages",
-	"doi",
-	"doiUrl",
-	"pmId",
-	"magId",
+	// "title",
+	// "paperAbstract",
+	// "s2url",
+	// "sources",
+	// "pdfUrls",
+	// "year:int",
+	// "venue",
+	// "journalName",
+	// "journalVolume",
+	// "journalPages",
+	// "doi",
+	// "doiUrl",
+	// "pmId",
+	// "magId",
 }
 var fieldOfStudyNodesHeader = []string{
 	"fieldOfStudyId:ID(Field-Of-Study-ID)",
@@ -96,27 +95,27 @@ func generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publication) (
 		// add publication
 		publicationNodes = append(publicationNodes, []string{
 			pub.ID,
-			CleanString(pub.Title),
-			CleanString(pub.PaperAbstract),
-			CleanString(pub.S2URL),
-			CleanString(strings.Join(pub.Sources, " | ")),
-			CleanString(strings.Join(pub.PdfUrls, " | ")),
-			CleanString(strconv.Itoa(pub.Year)),
-			CleanString(pub.Venue),
-			CleanString(pub.JournalName),
-			CleanString(pub.JournalVolume),
-			CleanString(pub.JournalPages),
-			CleanString(pub.Doi),
-			CleanString(pub.DoiURL),
-			CleanString(pub.PmID),
-			CleanString(pub.MagID),
+			//CleanString(pub.Title),
+			//CleanString(pub.PaperAbstract),
+			//CleanString(pub.S2URL),
+			//CleanString(strings.Join(pub.Sources, " | ")),
+			//CleanString(strings.Join(pub.PdfUrls, " | ")),
+			//CleanString(strconv.Itoa(pub.Year)),
+			//CleanString(pub.Venue),
+			//CleanString(pub.JournalName),
+			//CleanString(pub.JournalVolume),
+			//CleanString(pub.JournalPages),
+			//CleanString(pub.Doi),
+			//CleanString(pub.DoiURL),
+			//CleanString(pub.PmID),
+			//CleanString(pub.MagID),
 		})
 
 		// iterate over authors
 		for _, a := range pub.Authors {
 			for _, id := range a.IDs {
 				// add author
-				authors[id] = CleanString(a.Name)
+				// authors[id] = CleanString(a.Name)
 				// add edge author to publication
 				author2PublicationEdges = append(author2PublicationEdges, []string{id, pub.ID, "AUTHOR_OF"})
 			}
@@ -146,8 +145,9 @@ func generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publication) (
 		fieldsOfStudyNodes = append(fieldsOfStudyNodes, []string{k})
 	}
 
-	for k, v := range authors {
-		authorNodes = append(authorNodes, []string{k, v})
+	for k, _ := range authors {
+		//authorNodes = append(authorNodes, []string{k, v})
+		authorNodes = append(authorNodes, []string{k})
 	}
 
 	return
