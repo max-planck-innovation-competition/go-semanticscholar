@@ -10,6 +10,12 @@ Work in progress
 * Write API client
 * Test API client
 
+# Install
+
+```
+go get -u github.com/max-planck-innovation-competition/go-semanticscholar
+```
+
 # Modes
 
 ## Local Bulk Data

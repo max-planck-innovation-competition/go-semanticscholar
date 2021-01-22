@@ -1,4 +1,4 @@
-module github.com/Max-Planck-Innovation-Competition/go-semanticscholar
+module github.com/max-planck-innovation-competition/go-semanticscholar
 
 go 1.15
 
