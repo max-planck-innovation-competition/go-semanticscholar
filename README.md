@@ -6,14 +6,16 @@ and the Semantic Scholar API.
 # Status
 Work in progress
 
-# Todo
-* Write API client
-* Test API client
-
 # Install
 
 ```
 go get -u github.com/max-planck-innovation-competition/go-semanticscholar
+```
+
+# Env Variables
+
+```
+NEO4J=TRUE // enables the specific header csv formatting for neo4j database ingestion
 ```
 
 # Modes
@@ -41,9 +43,6 @@ results, err := semanticscholar.ParseFile("/PATH/TO/BULK/DATA/DIRECTORY/FILE.gz"
 results, err := semanticscholar.ReadFromDirectory("/PATH/TO/BULK/DATA/DIRECTORY")
 ```
 
-## API
-
-Coming soon
 
 # Authors
 * Sebastian Erhardt

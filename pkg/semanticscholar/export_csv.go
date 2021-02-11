@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"encoding/csv"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -15,35 +16,6 @@ You must use the same delimiter for the header file and for the data files.
 The header contains information for each field, with the format <name>:<field_type>.
 The <name> is used for properties and node IDs. In all other cases, the <name> part of the field is ignored.
 */
-
-var authorNodesHeader = []string{
-	"authorId:ID(Author-ID)",
-	// "name",
-}
-var publicationNodesHeader = []string{
-	"publicationId:ID(Publication-ID)",
-	// "title",
-	// "paperAbstract",
-	// "s2url",
-	// "sources",
-	// "pdfUrls",
-	// "year:int",
-	// "venue",
-	// "journalName",
-	// "journalVolume",
-	// "journalPages",
-	// "doi",
-	// "doiUrl",
-	// "pmId",
-	// "magId",
-}
-var fieldOfStudyNodesHeader = []string{
-	"fieldOfStudyId:ID(Field-Of-Study-ID)",
-}
-var author2PublicationEdgesHeader = []string{":START_ID(Author-ID)", ":END_ID(Publication-ID)", ":TYPE"}
-var publication2FieldsOfStudyEdgesHeader = []string{":START_ID(Publication-ID)", ":END_ID(Field-Of-Study-ID)", ":TYPE"}
-var inCitationEdgesHeader = []string{":START_ID(Publication-ID)", ":END_ID(Publication-ID)", ":TYPE"}
-var outCitationEdgesHeader = []string{":START_ID(Publication-ID)", ":END_ID(Publication-ID)", ":TYPE"}
 
 // CleanString repairs artifacts that are in the dataset
 // e.g. German umlauts
@@ -75,13 +47,25 @@ func generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publication) (
 
 	if addHeaders {
 		// add headers
-		authorNodes = append(publicationNodes, authorNodesHeader)
-		publicationNodes = append(publicationNodes, publicationNodesHeader)
-		fieldsOfStudyNodes = append(fieldsOfStudyNodes, fieldOfStudyNodesHeader)
-		author2PublicationEdges = append(author2PublicationEdges, author2PublicationEdgesHeader)
-		publication2FieldsOfStudyEdges = append(publication2FieldsOfStudyEdges, publication2FieldsOfStudyEdgesHeader)
-		inCitationEdges = append(inCitationEdges, inCitationEdgesHeader)
-		outCitationEdges = append(outCitationEdges, outCitationEdgesHeader)
+		if len(os.Getenv("NEO4J")) > 0 {
+			// add the specific neo4j header formatting
+			authorNodes = append(publicationNodes, Neo4jAuthorNodesHeader)
+			publicationNodes = append(publicationNodes, Neo4jPublicationNodesHeader)
+			fieldsOfStudyNodes = append(fieldsOfStudyNodes, Neo4jFieldOfStudyNodesHeader)
+			author2PublicationEdges = append(author2PublicationEdges, Neo4jAuthor2PublicationEdgesHeader)
+			publication2FieldsOfStudyEdges = append(publication2FieldsOfStudyEdges, Neo4jPublication2FieldsOfStudyEdgesHeader)
+			inCitationEdges = append(inCitationEdges, Neo4jInCitationEdgesHeader)
+			outCitationEdges = append(outCitationEdges, Neo4jOutCitationEdgesHeader)
+		} else {
+			authorNodes = append(publicationNodes, AuthorNodesHeader)
+			publicationNodes = append(publicationNodes, PublicationNodesHeader)
+			fieldsOfStudyNodes = append(fieldsOfStudyNodes, FieldOfStudyNodesHeader)
+			author2PublicationEdges = append(author2PublicationEdges, Author2PublicationEdgesHeader)
+			publication2FieldsOfStudyEdges = append(publication2FieldsOfStudyEdges, Publication2FieldsOfStudyEdgesHeader)
+			inCitationEdges = append(inCitationEdges, InCitationEdgesHeader)
+			outCitationEdges = append(outCitationEdges, OutCitationEdgesHeader)
+		}
+
 		// if you are interested in only the headers
 		if onlyHeaders {
 			return
@@ -95,20 +79,20 @@ func generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publication) (
 		// add publication
 		publicationNodes = append(publicationNodes, []string{
 			pub.ID,
-			//CleanString(pub.Title),
-			//CleanString(pub.PaperAbstract),
-			//CleanString(pub.S2URL),
-			//CleanString(strings.Join(pub.Sources, " | ")),
-			//CleanString(strings.Join(pub.PdfUrls, " | ")),
-			//CleanString(strconv.Itoa(pub.Year)),
-			//CleanString(pub.Venue),
-			//CleanString(pub.JournalName),
-			//CleanString(pub.JournalVolume),
-			//CleanString(pub.JournalPages),
-			//CleanString(pub.Doi),
-			//CleanString(pub.DoiURL),
-			//CleanString(pub.PmID),
-			//CleanString(pub.MagID),
+			CleanString(pub.Title),
+			CleanString(pub.PaperAbstract),
+			CleanString(pub.S2URL),
+			CleanString(strings.Join(pub.Sources, " | ")),
+			CleanString(strings.Join(pub.PdfUrls, " | ")),
+			CleanString(strconv.Itoa(pub.Year)),
+			CleanString(pub.Venue),
+			CleanString(pub.JournalName),
+			CleanString(pub.JournalVolume),
+			CleanString(pub.JournalPages),
+			CleanString(pub.Doi),
+			CleanString(pub.DoiURL),
+			CleanString(pub.PmID),
+			CleanString(pub.MagID),
 		})
 
 		// iterate over authors
