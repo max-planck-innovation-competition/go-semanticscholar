@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"github.com/Max-Planck-Innovation-Competition/go-semanticscholar/pkg/semanticscholar"
+	"github.com/max-planck-innovation-competition/go-semanticscholar/pkg/semanticscholar"
 	"log"
 )
 
