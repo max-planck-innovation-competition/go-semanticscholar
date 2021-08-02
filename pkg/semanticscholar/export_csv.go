@@ -31,7 +31,7 @@ func CleanString(dirty string) string {
 }
 
 // generateRecords transforms the Publication objects into the csv format
-func generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publication) (
+func (e *ETL) generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publication) (
 	authorNodes [][]string,
 	publicationNodes [][]string,
 	fieldsOfStudyNodes [][]string,
@@ -138,114 +138,138 @@ func generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publication) (
 }
 
 // ExportCsv transforms the data and stores it in a (compressed) csv file
-func ExportCsv(i int, gzip, addHeaders bool, onlyHeaders bool, publications []*Publication, exportFolderPath, prefix, suffix string) (err error) {
+func (e *ETL) ExportCsv(i int, gzip, addHeaders bool, onlyHeaders bool, publications []*Publication, prefix, suffix string) (err error) {
 	authorNodes,
 		publicationNodes,
 		fieldsOfStudyNodes,
 		author2PublicationEdges,
 		publication2FieldsOfStudyEdges,
 		inCitationEdges,
-		outCitationEdges := generateRecords(addHeaders, onlyHeaders, publications)
+		outCitationEdges := e.generateRecords(addHeaders, onlyHeaders, publications)
 	// author nodes
-	err = WriteFile(gzip, authorNodes, exportFolderPath+"/"+prefix+"author-nodes"+suffix)
-	if err != nil {
-		return
+	if e.IncludeAuthors {
+		err = e.WriteFile(gzip, authorNodes, e.ExportDirectory+"/"+prefix+"author-nodes"+suffix)
+		if err != nil {
+			return
+		}
 	}
-	if i == 0 {
+	// fields of study
+	if e.IncludeFieldOfStudies && i == 0 {
 		// fields of study
-		err = WriteFile(gzip, fieldsOfStudyNodes, exportFolderPath+"/"+prefix+"fields-of-study-nodes"+suffix)
+		err = e.WriteFile(gzip, fieldsOfStudyNodes, e.ExportDirectory+"/"+prefix+"fields-of-study-nodes"+suffix)
 		if err != nil {
 			return
 		}
 	}
 	// publication nodes
-	err = WriteFile(gzip, publicationNodes, exportFolderPath+"/"+prefix+"publication-nodes"+suffix)
-	if err != nil {
-		return
+	if e.IncludePublications {
+		err = e.WriteFile(gzip, publicationNodes, e.ExportDirectory+"/"+prefix+"publication-nodes"+suffix)
+		if err != nil {
+			return
+		}
 	}
 	// author to publication edges
-	err = WriteFile(gzip, author2PublicationEdges, exportFolderPath+"/"+prefix+"author-2-publication-edges"+suffix)
-	if err != nil {
-		return
+	if e.IncludeAuthorPublicationEdges {
+		err = e.WriteFile(gzip, author2PublicationEdges, e.ExportDirectory+"/"+prefix+"author-2-publication-edges"+suffix)
+		if err != nil {
+			return
+		}
 	}
 	// publication to field of study edges
-	err = WriteFile(gzip, publication2FieldsOfStudyEdges, exportFolderPath+"/"+prefix+"publication-2-fields-of-study-edges"+suffix)
-	if err != nil {
-		return
+	if e.IncludeAuthorPublicationEdges {
+		err = e.WriteFile(gzip, publication2FieldsOfStudyEdges, e.ExportDirectory+"/"+prefix+"publication-2-fields-of-study-edges"+suffix)
+		if err != nil {
+			return
+		}
 	}
 	// in citations
-	err = WriteFile(gzip, inCitationEdges, exportFolderPath+"/"+prefix+"in-citation-edges"+suffix)
-	if err != nil {
-		return
+	if e.IncludeInCitationEdges {
+		err = e.WriteFile(gzip, inCitationEdges, e.ExportDirectory+"/"+prefix+"in-citation-edges"+suffix)
+		if err != nil {
+			return
+		}
 	}
 	// out CitationEdges
-	err = WriteFile(gzip, outCitationEdges, exportFolderPath+"/"+prefix+"out-citation-edges"+suffix)
-	if err != nil {
-		return
+	if e.IncludeOutCitationEdges {
+		err = e.WriteFile(gzip, outCitationEdges, e.ExportDirectory+"/"+prefix+"out-citation-edges"+suffix)
+		if err != nil {
+			return
+		}
 	}
 	return
 }
 
-// ExportCsv transforms the data and stores it in a (compressed) csv file
-func ExportAppendCsv(i int, publications []*Publication, exportFolderPath, prefix, suffix string) (err error) {
+// ExportAppendCsv transforms the data and stores it in a (compressed) csv file
+func (e *ETL) ExportAppendCsv(i int, publications []*Publication, prefix, suffix string) (err error) {
 	authorNodes,
 		publicationNodes,
 		fieldsOfStudyNodes,
 		author2PublicationEdges,
 		publication2FieldsOfStudyEdges,
 		inCitationEdges,
-		outCitationEdges := generateRecords(false, false, publications)
+		outCitationEdges := e.generateRecords(false, false, publications)
 	// author nodes
-	err = AppendFile(authorNodes, exportFolderPath+"/"+prefix+"author-nodes"+suffix)
-	if err != nil {
-		return
+	if e.IncludeAuthors {
+		err = e.AppendFile(authorNodes, e.ExportDirectory+"/"+prefix+"author-nodes"+suffix)
+		if err != nil {
+			return
+		}
 	}
-	if i == 0 {
-		// fields of study
-		err = AppendFile(fieldsOfStudyNodes, exportFolderPath+"/"+prefix+"fields-of-study-nodes"+suffix)
+	// fields of study
+	if e.IncludeFieldOfStudies && i == 0 {
+		err = e.AppendFile(fieldsOfStudyNodes, e.ExportDirectory+"/"+prefix+"fields-of-study-nodes"+suffix)
 		if err != nil {
 			return
 		}
 	}
 	// publication nodes
-	err = AppendFile(publicationNodes, exportFolderPath+"/"+prefix+"publication-nodes"+suffix)
-	if err != nil {
-		return
+	if e.IncludePublications {
+		err = e.AppendFile(publicationNodes, e.ExportDirectory+"/"+prefix+"publication-nodes"+suffix)
+		if err != nil {
+			return
+		}
 	}
-
 	// author to publication edges
-	err = AppendFile(author2PublicationEdges, exportFolderPath+"/"+prefix+"author-2-publication-edges"+suffix)
-	if err != nil {
-		return
+	if e.IncludeAuthorPublicationEdges {
+		err = e.AppendFile(author2PublicationEdges, e.ExportDirectory+"/"+prefix+"author-2-publication-edges"+suffix)
+		if err != nil {
+			return
+		}
 	}
 	// publication to field of study edges
-	err = AppendFile(publication2FieldsOfStudyEdges, exportFolderPath+"/"+prefix+"publication-2-fields-of-study-edges"+suffix)
-	if err != nil {
-		return
+	if e.IncludePublicationFieldOfStudyEdges {
+		err = e.AppendFile(publication2FieldsOfStudyEdges, e.ExportDirectory+"/"+prefix+"publication-2-fields-of-study-edges"+suffix)
+		if err != nil {
+			return
+		}
 	}
 	// in citations
-	err = AppendFile(inCitationEdges, exportFolderPath+"/"+prefix+"in-citation-edges"+suffix)
-	if err != nil {
-		return
+	if e.IncludeInCitationEdges {
+		err = e.AppendFile(inCitationEdges, e.ExportDirectory+"/"+prefix+"in-citation-edges"+suffix)
+		if err != nil {
+			return
+		}
 	}
 	// out CitationEdges
-	err = AppendFile(outCitationEdges, exportFolderPath+"/"+prefix+"out-citation-edges"+suffix)
-	if err != nil {
-		return
+	if e.IncludeOutCitationEdges {
+		err = e.AppendFile(outCitationEdges, e.ExportDirectory+"/"+prefix+"out-citation-edges"+suffix)
+		if err != nil {
+			return
+		}
 	}
 	return
 }
 
-func WriteFile(gzip bool, data [][]string, filePath string) (err error) {
+func (e *ETL) WriteFile(gzip bool, data [][]string, filePath string) (err error) {
 	if gzip {
-		return writeCSVGz(data, filePath)
+		return e.writeCSVGz(data, filePath)
 	} else {
-		return writeCSV(data, filePath)
+		return e.writeCSV(data, filePath)
 	}
 }
 
 // writeCSVGz generates a compressed csv file
-func writeCSVGz(data [][]string, filePath string) (err error) {
+func (e *ETL) writeCSVGz(data [][]string, filePath string) (err error) {
 	file, err := os.Create(filePath + ".csv.gz")
 	if err != nil {
 		return
@@ -277,7 +301,7 @@ func writeCSVGz(data [][]string, filePath string) (err error) {
 }
 
 // writeCSV generates a csv file
-func writeCSV(data [][]string, filePath string) (err error) {
+func (e *ETL) writeCSV(data [][]string, filePath string) (err error) {
 	// create file
 	file, err := os.Create(filePath + ".csv")
 	if err != nil {
@@ -298,7 +322,7 @@ func writeCSV(data [][]string, filePath string) (err error) {
 }
 
 // AppendFile appends the content to all file
-func AppendFile(data [][]string, filePath string) (err error) {
+func (e *ETL) AppendFile(data [][]string, filePath string) (err error) {
 	file, err := os.OpenFile(filePath+".csv", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic(err)

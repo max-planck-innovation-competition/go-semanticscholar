@@ -43,7 +43,6 @@ results, err := semanticscholar.ParseFile("/PATH/TO/BULK/DATA/DIRECTORY/FILE.gz"
 results, err := semanticscholar.ReadFromDirectory("/PATH/TO/BULK/DATA/DIRECTORY")
 ```
 
-
 # Authors
 * Sebastian Erhardt
 

@@ -6,11 +6,11 @@ import (
 	"strconv"
 )
 
-func TransformDirectory(importDirectory, exportDirectory string, compress, combined bool) (err error) {
-	log.Println("Start transforming directory:", importDirectory)
+func (e *ETL) TransformDirectory() (err error) {
+	log.Println("Start transforming directory:", e.ImportDirectory)
 	var filePaths []string // stores the file paths of all the files in the directory
 	// walk over the files in the directory
-	err = filepath.Walk(importDirectory, visit(&filePaths))
+	err = filepath.Walk(e.ImportDirectory, visit(&filePaths))
 	if err != nil {
 		return err
 	}
@@ -25,17 +25,17 @@ func TransformDirectory(importDirectory, exportDirectory string, compress, combi
 		// create header files
 		// only do that once
 		if i == 0 {
-			errHeader := ExportCsv(i, compress, true, true, publications, exportDirectory, "", "-headers")
+			errHeader := e.ExportCsv(i, e.Compress, true, true, publications, "", "-headers")
 			if errHeader != nil {
 				log.Println("error while exporting header files ", errHeader)
 				return errHeader
 			}
 		}
-		// if the mode is combined
+		// if the mode is Combined
 		// the output is one file containing all of the
-		if combined {
+		if e.Combined {
 			suffix := "-data-all"
-			errExport := ExportAppendCsv(i, publications, exportDirectory, "", suffix)
+			errExport := e.ExportAppendCsv(i, publications, "", suffix)
 			if errExport != nil {
 				log.Println("error while exporting files: ", errExport)
 				return errExport
@@ -44,14 +44,14 @@ func TransformDirectory(importDirectory, exportDirectory string, compress, combi
 			// the output are multiple files
 			suffix := "-data-" + strconv.Itoa(i)
 			// export files
-			errExport := ExportCsv(i, compress, false, false, publications, exportDirectory, "", suffix)
+			errExport := e.ExportCsv(i, e.Compress, false, false, publications, "", suffix)
 			if errExport != nil {
 				log.Println("error while exporting files: ", errExport)
 				return errExport
 			}
 		}
 	}
-	log.Println("Done transforming directory:", importDirectory)
-	log.Println("Exported to:", exportDirectory)
+	log.Println("Done transforming directory:", e.ImportDirectory)
+	log.Println("Exported to:", e.ExportDirectory)
 	return
 }
