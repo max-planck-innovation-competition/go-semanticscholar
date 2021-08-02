@@ -22,5 +22,3 @@ env GOOS=linux go build -o semantic-scholar-csv
 -inCitationEdges=false \
 -outCitationEdges=false
 ```
-
--fork=false

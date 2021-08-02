@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // visit walks over files in a directory
@@ -13,7 +14,7 @@ func visit(files *[]string) filepath.WalkFunc {
 			log.Fatal("visit", err)
 		}
 		// do not include directories
-		if !info.IsDir() {
+		if !info.IsDir() && strings.Contains(path, ".gz") {
 			// only files
 			*files = append(*files, path)
 		}
