@@ -12,13 +12,13 @@ env GOOS=linux go build -o semantic-scholar-csv
 ## Execute
 ```shell
 ./semantic-scholar-csv \
---exportGz=true \
---combined=true \
---publications=true \
---authors=false \
---fieldOfStudies=false \
---authorPublicationEdges=false \
---publicationFieldOfStudyEdges=false \
---inCitationEdges=false \
---outCitationEdges=false
+-export-gz=true \
+-combined=true \
+-publications=true \
+-authors=false \
+-fieldOfStudies=false \
+-authorPublicationEdges=false \
+-publicationFieldOfStudyEdges=false \
+-inCitationEdges=false \
+-outCitationEdges=false &> log.log &
 ```
