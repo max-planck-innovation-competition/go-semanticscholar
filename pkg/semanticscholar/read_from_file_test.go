@@ -12,7 +12,7 @@ func TestParseFile(t *testing.T) {
 		log.Fatal(err)
 	}
 	log.Println("Amount of results:", len(results))
-	log.Println("Example:", results[10].Title)
+	log.Println("Example:", results[0].Title)
 }
 
 // Tests gz file
