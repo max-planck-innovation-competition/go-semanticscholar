@@ -7,6 +7,9 @@ import (
 )
 
 func (e *ETL) TransformDirectory() (err error) {
+	// check if there are handlers set
+	// otherwise set the default handlers
+	e.CheckDefaultHandlers()
 	log.Println("Start transforming directory:", e.ImportDirectory)
 	var filePaths []string // stores the file paths of all the files in the directory
 	// walk over the files in the directory

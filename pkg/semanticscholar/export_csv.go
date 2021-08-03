@@ -4,7 +4,6 @@ import (
 	"compress/gzip"
 	"encoding/csv"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -58,7 +57,7 @@ func (e *ETL) generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publica
 			outCitationEdges = append(outCitationEdges, Neo4jOutCitationEdgesHeader)
 		} else {
 			authorNodes = append(publicationNodes, AuthorNodesHeader)
-			publicationNodes = append(publicationNodes, PublicationNodesHeader)
+			publicationNodes = append(publicationNodes, e.PublicationHeaderHandler())
 			fieldsOfStudyNodes = append(fieldsOfStudyNodes, FieldOfStudyNodesHeader)
 			author2PublicationEdges = append(author2PublicationEdges, Author2PublicationEdgesHeader)
 			publication2FieldsOfStudyEdges = append(publication2FieldsOfStudyEdges, Publication2FieldsOfStudyEdgesHeader)
@@ -77,23 +76,7 @@ func (e *ETL) generateRecords(addHeaders bool, onlyHeaders bool, pubs []*Publica
 		publications[pub.ID] = true
 
 		// add publication
-		publicationNodes = append(publicationNodes, []string{
-			pub.ID,
-			CleanString(pub.Title),
-			CleanString(pub.PaperAbstract),
-			CleanString(pub.S2URL),
-			CleanString(strings.Join(pub.Sources, " | ")),
-			CleanString(strings.Join(pub.PdfUrls, " | ")),
-			CleanString(strconv.Itoa(pub.Year)),
-			CleanString(pub.Venue),
-			CleanString(pub.JournalName),
-			CleanString(pub.JournalVolume),
-			CleanString(pub.JournalPages),
-			CleanString(pub.Doi),
-			CleanString(pub.DoiURL),
-			CleanString(pub.PmID),
-			CleanString(pub.MagID),
-		})
+		publicationNodes = append(publicationNodes, e.PublicationFieldHandler(pub))
 
 		// iterate over authors
 		for _, a := range pub.Authors {
