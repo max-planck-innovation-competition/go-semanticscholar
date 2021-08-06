@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/max-planck-innovation-competition/go-semanticscholar/pkg/semanticscholar"
 	"log"
+	"strconv"
 )
 
 var (
@@ -56,7 +57,7 @@ func main() {
 		return []string{
 			"publicationId",
 			"doi",
-			"doiUrl",
+			"year",
 			"pmId",
 			"magId",
 		}
@@ -65,12 +66,13 @@ func main() {
 		result := []string{
 			pub.ID,
 			semanticscholar.CleanString(pub.Doi),
-			semanticscholar.CleanString(pub.DoiURL),
+			semanticscholar.CleanString(strconv.Itoa(pub.Year)),
 			semanticscholar.CleanString(pub.PmID),
 			semanticscholar.CleanString(pub.MagID),
 		}
 		return result
 	}
+
 	err := e.TransformDirectory()
 	if err != nil {
 		log.Fatal(err)
