@@ -14,6 +14,7 @@ func visit(files *[]string) filepath.WalkFunc {
 			log.Fatal("visit", err)
 		}
 		// do not include directories
+		// only include files with .gz extension
 		if !info.IsDir() && strings.Contains(path, ".gz") {
 			// only files
 			*files = append(*files, path)
