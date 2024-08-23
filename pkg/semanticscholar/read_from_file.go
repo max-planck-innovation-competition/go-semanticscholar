@@ -9,9 +9,6 @@ import (
 	"path"
 )
 
-// use faster parser
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
-
 // ParseFile takes a file name read the data from within the file
 // and returns an array of parse Publications.
 // It also checks if the file is in a compressed format like .gz
@@ -73,6 +70,9 @@ func ParseFile(fileName string) (results []*Publication, err error) {
 // ParseLine takes a line in byte from
 // and returns a parse publication
 func ParseLine(line []byte) (data Publication, err error) {
+	// use faster parser
+	var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
 	err = json.Unmarshal(line, &data)
 	return
 }
